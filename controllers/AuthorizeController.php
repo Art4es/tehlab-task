@@ -66,7 +66,7 @@ class AuthorizeController extends \yii\web\Controller
 
         $model = new SignInForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            return $this->goHome();
         }
 
         $model->password = '';
