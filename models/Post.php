@@ -84,4 +84,20 @@ class Post extends ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'updated_by']);
     }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $current_user = \Yii::$app->user;
+            if (empty(self::findOne(['id' => $this->id]))) {
+                $this->created_at = (new \DateTimeImmutable())->format('Y-m-d H:i:s');
+                $this->created_by = $current_user->id;
+            }
+            $this->updated_at = (new \DateTimeImmutable())->format('Y-m-d H:i:s');
+            $this->updated_by = $current_user->id;
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

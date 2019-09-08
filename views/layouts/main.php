@@ -1,14 +1,16 @@
 <?php
 
 /* @var $this \yii\web\View */
+
 /* @var $content string */
 
+use app\assets\AppAsset;
+use app\models\User;
 use app\widgets\Alert;
-use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
+use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
-use app\assets\AppAsset;
 
 AppAsset::register($this);
 ?>
@@ -35,25 +37,29 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
+
+    $items[] = ['label' => 'Home', 'url' => ['posts/index']];
+    if (Yii::$app->user->isGuest) {
+        $items[] = ['label' => 'Sign In', 'url' => ['authorize/sign-in']];
+        $items[] = ['label' => 'Sign Up', 'url' => ['authorize/sign-up']];
+    } else {
+        if (Yii::$app->user->identity->role === User::ROLE_ADMIN) {
+            $items[] = ['label' => 'Users', 'url' => ['users/index']];
+        }
+
+        $items[] = '<li>'
+            . Html::beginForm(['authorize/sign-out'], 'post')
+            . Html::submitButton(
+                'Logout (' . Yii::$app->user->identity->username . ')',
+                ['class' => 'btn btn-link logout']
+            )
+            . Html::endForm()
+            . '</li>';
+    };
+
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
-            ) : (
-                '<li>'
-                . Html::beginForm(['/site/logout'], 'post')
-                . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn btn-link logout']
-                )
-                . Html::endForm()
-                . '</li>'
-            )
-        ],
+        'items' => $items
     ]);
     NavBar::end();
     ?>
