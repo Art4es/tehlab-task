@@ -29,7 +29,7 @@ class User extends ActiveRecord implements IdentityInterface
 
 
     private $authKey;
-    
+
     /**
      * {@inheritdoc}
      */
@@ -159,6 +159,11 @@ class User extends ActiveRecord implements IdentityInterface
     public function validatePassword($password)
     {
         return $this->password_hash === sha1($password);
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === self::ROLE_ADMIN;
     }
 
     public function beforeSave($insert)

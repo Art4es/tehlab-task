@@ -5,7 +5,6 @@
 /* @var $content string */
 
 use app\assets\AppAsset;
-use app\models\User;
 use app\widgets\Alert;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
@@ -43,7 +42,7 @@ AppAsset::register($this);
         $items[] = ['label' => 'Sign In', 'url' => ['authorize/sign-in']];
         $items[] = ['label' => 'Sign Up', 'url' => ['authorize/sign-up']];
     } else {
-        if (Yii::$app->user->identity->role === User::ROLE_ADMIN) {
+        if (Yii::$app->user->identity->isAdmin()) {
             $items[] = ['label' => 'Users', 'url' => ['users/index']];
         }
 

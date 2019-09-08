@@ -27,7 +27,7 @@ class UsersController extends Controller
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
                             $is_authorized = !Yii::$app->user->isGuest;
-                            $is_admin = $is_authorized ? Yii::$app->user->identity->role === User::ROLE_ADMIN : false;
+                            $is_admin = $is_authorized ? Yii::$app->user->identity->isAdmin() : false;
                             return $is_admin;
                         }
                     ],
