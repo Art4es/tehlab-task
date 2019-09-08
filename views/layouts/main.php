@@ -44,8 +44,9 @@ AppAsset::register($this);
     } else {
         if (Yii::$app->user->identity->isAdmin()) {
             $items[] = ['label' => 'Users', 'url' => ['users/index']];
+            $items[] = ['label' => 'AdminCab', 'url' => ['cabinet/admin']];
         }
-
+        $items[] = ['label' => 'Cabinet', 'url' => ['cabinet/common']];
         $items[] = '<li>'
             . Html::beginForm(['authorize/sign-out'], 'post')
             . Html::submitButton(
