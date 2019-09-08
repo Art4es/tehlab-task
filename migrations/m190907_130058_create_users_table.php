@@ -14,10 +14,10 @@ class m190907_130058_create_users_table extends Migration
     {
         $this->createTable('{{%users}}', [
             'id' => $this->bigPrimaryKey(),
-            'username' => $this->string(50)->unique(),
-            'password_hash' => $this->string(50),
-            'role' => $this->integer(),
-            'is_active' => $this->binary(),
+            'username' => $this->string(50)->unique()->notNull(),
+            'password_hash' => $this->string(50)->notNull(),
+            'role' => $this->integer()->notNull(),
+            'is_active' => $this->binary()->notNull(),
         ]);
         $this->createIndex(
             'idx-users-id',

@@ -15,10 +15,10 @@ class m190907_130126_create_posts_table extends Migration
         $this->createTable('{{%posts}}', [
             'id' => $this->bigPrimaryKey(),
             'text' => $this->text(),
-            'created_by' => $this->bigInteger(),
-            'created_at' => $this->dateTime(),
-            'updated_by' => $this->bigInteger(),
-            'updated_at' => $this->dateTime()
+            'created_by' => $this->bigInteger()->notNull(),
+            'created_at' => $this->dateTime()->notNull(),
+            'updated_by' => $this->bigInteger()->notNull(),
+            'updated_at' => $this->dateTime()->notNull()
         ]);
         $this->createIndex(
             'idx-posts-id',
