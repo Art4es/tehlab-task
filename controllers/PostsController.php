@@ -7,6 +7,7 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -14,6 +15,14 @@ use yii\web\NotFoundHttpException;
  */
 class PostsController extends Controller
 {
+    private $current_user;
+
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->current_user = Yii::$app->user->identity;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -46,9 +55,8 @@ class PostsController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => Post::find(),
         ]);
-        $user = Yii::$app->user->identity;
         return $this->render('index', [
-            'user' => $user,
+            'user' => $this->current_user,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -62,6 +70,7 @@ class PostsController extends Controller
     public function actionView($id)
     {
         return $this->render('view', [
+            'user' => $this->current_user,
             'model' => $this->findModel($id),
         ]);
     }
@@ -89,10 +98,13 @@ class PostsController extends Controller
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws ForbiddenHttpException
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+
+        $this->checkAccess($model);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -108,10 +120,15 @@ class PostsController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws ForbiddenHttpException
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
+        $model = $this->findModel($id);
+        $this->checkAccess($model);
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -131,5 +148,17 @@ class PostsController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * @param $model Post
+     * @return void
+     * @throws ForbiddenHttpException
+     */
+    protected function checkAccess($model)
+    {
+        if (!$this->current_user->isAdmin() && $this->current_user->getId() !== $model->created_by) {
+            throw new ForbiddenHttpException('You are not allowed to perform this action.');
+        }
     }
 }
