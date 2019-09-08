@@ -36,7 +36,8 @@ class CabinetController extends Controller
 
     public function actionCommon()
     {
-        return $this->render('common_cabinet');
+        $user = Yii::$app->user->identity;
+        return $this->render('common_cabinet', ['user' => $user]);
     }
 
     public function actionAdmin()
