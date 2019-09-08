@@ -37,7 +37,7 @@ AppAsset::register($this);
         ],
     ]);
 
-    $items[] = ['label' => 'Home', 'url' => ['posts/index']];
+    $items[] = ['label' => 'Posts', 'url' => ['posts/index']];
     if (Yii::$app->user->isGuest) {
         $items[] = ['label' => 'Sign In', 'url' => ['authorize/sign-in']];
         $items[] = ['label' => 'Sign Up', 'url' => ['authorize/sign-up']];
