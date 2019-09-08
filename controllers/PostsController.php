@@ -5,7 +5,7 @@ namespace app\controllers;
 use app\models\Post;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -20,10 +20,18 @@ class PostsController extends Controller
     public function behaviors()
     {
         return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['create', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['index', 'view'],
+                        'allow' => true,
+                    ],
                 ],
             ],
         ];
@@ -38,8 +46,9 @@ class PostsController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => Post::find(),
         ]);
-
+        $user = Yii::$app->user->identity;
         return $this->render('index', [
+            'user' => $user,
             'dataProvider' => $dataProvider,
         ]);
     }
